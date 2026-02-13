@@ -130,6 +130,11 @@ void Game::scanForMouse()
 		else if (square->isMouseOver(mousePos))
 		{
 			entity = square;
+			square->setHighlighted(true);
+		}
+		else
+		{
+			square->setHighlighted(false);
 		}
 	});
 	if (ImGui::IsMouseClicked(0))

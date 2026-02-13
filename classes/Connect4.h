@@ -12,6 +12,8 @@ public:
     void setUpBoard() override;
     void stopGame() override;
 
+    bool actionForEmptyHolder(BitHolder &holder) override;
+
     std::string initialStateString() override;
     std::string stateString() override;
     void setStateString(const std::string &s) override;
@@ -27,6 +29,10 @@ private:
     static const int GRID_HEIGHT = 6;
 
     static const int NUM_PLAYERS = 2;
+    static const int YELLOW_PLAYER = 0;
+    static const int RED_PLAYER = 1;
 
     Grid* _grid;
+
+    Bit *CreatePiece(Player *player);
 };

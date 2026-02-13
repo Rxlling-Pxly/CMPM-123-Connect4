@@ -26,13 +26,40 @@ void Connect4::stopGame()
     });
 }
 
+bool Connect4::actionForEmptyHolder(BitHolder &holder)
+{
+    if (!holder.empty())
+        return false;
+
+    ChessSquare &square = static_cast<ChessSquare&>(holder);
+    int squareUnderX = square.getColumn();
+    int squareUnderY = square.getRow() + 1;
+    if (_grid->isValid(squareUnderX, squareUnderY) && _grid->getSquare(squareUnderX, squareUnderY)->empty())
+        return false;
+
+    Bit* piece = CreatePiece(getCurrentPlayer());
+    piece->setPosition(holder.getPosition());
+    holder.setBit(piece);
+    holder.setHighlighted(false);
+    endTurn();
+    return true;
+}
+Bit *Connect4::CreatePiece(Player *player)
+{
+    Bit *bit = new Bit();
+    bit->setOwner(player);
+    bit->setGameTag(player->playerNumber());
+    bit->LoadTextureFromFile(player == getPlayerAt(YELLOW_PLAYER) ? "yellow.png" : "red.png");
+    return bit;
+}
+
 std::string Connect4::initialStateString()
 {
-    return "NOT_IMPLEMENTED";
+    return std::string(GRID_WIDTH * GRID_HEIGHT, '0');
 }
 std::string Connect4::stateString()
 {
-    return "NOT_IMPLEMENTED";
+    return _grid->getStateString();
 }
 void Connect4::setStateString(const std::string &s)
 {
