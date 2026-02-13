@@ -1,18 +1,19 @@
 Files modified besides Connect4.h and Connect4.cpp:
-    - readme.md
-    so I could write this
 
-    - .gitignore
-    so build folder doesn't commit
+    readme.md
+    - so I could write this
 
-    - CMakeLists.txt
-    so connect 4 files are linked
+    .gitignore
+    - so build folder doesn't commit
 
-    - ChessSquare.cpp
-    changed doubles to floats, removing warnings
+    CMakeLists.txt
+    - so connect 4 files are linked
 
-    - Applicaton.cpp
-    so you can play connect 4
+    ChessSquare.cpp
+    - changed doubles to floats, removing warnings
 
-    - Game.cpp
-    so you can see which square you're highlighting
+    Applicaton.cpp
+    - so you can play connect 4
+
+    Game.cpp
+    - so you can see which square you're highlighting
