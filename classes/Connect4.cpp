@@ -57,7 +57,7 @@ Bit *Connect4::CreatePiece(Player *player)
 {
     Bit *bit = new Bit();
     bit->setOwner(player);
-    bit->setGameTag(player->playerNumber());
+    bit->setGameTag(player->playerNumber() + 1);
     bit->LoadTextureFromFile(player == getPlayerAt(YELLOW_PLAYER) ? "yellow.png" : "red.png");
     return bit;
 }
