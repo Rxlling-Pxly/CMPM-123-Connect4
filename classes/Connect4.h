@@ -16,13 +16,13 @@ public:
 
     std::string initialStateString() override;
     std::string stateString() override;
-    void setStateString(const std::string &s) override;
+    void setStateString(const std::string &s) {} // not implemented
 
     Player *checkForWinner() override;
     bool checkForDraw() override;
 
-    bool canBitMoveFrom(Bit &bit, BitHolder &src) override;
-    bool canBitMoveFromTo(Bit &bit, BitHolder &src, BitHolder &dst) override;
+    bool canBitMoveFrom(Bit &bit, BitHolder &src) { return false; } // not applicable
+    bool canBitMoveFromTo(Bit &bit, BitHolder &src, BitHolder &dst) { return false; } // not applicable
 
 private:
     static const int GRID_WIDTH = 7;

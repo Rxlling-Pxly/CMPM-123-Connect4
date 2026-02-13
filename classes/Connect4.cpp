@@ -26,6 +26,15 @@ void Connect4::stopGame()
     });
 }
 
+std::string Connect4::initialStateString()
+{
+    return std::string(GRID_WIDTH * GRID_HEIGHT, '0');
+}
+std::string Connect4::stateString()
+{
+    return _grid->getStateString();
+}
+
 bool Connect4::actionForEmptyHolder(BitHolder &holder)
 {
     if (!holder.empty())
@@ -53,35 +62,11 @@ Bit *Connect4::CreatePiece(Player *player)
     return bit;
 }
 
-std::string Connect4::initialStateString()
-{
-    return std::string(GRID_WIDTH * GRID_HEIGHT, '0');
-}
-std::string Connect4::stateString()
-{
-    return _grid->getStateString();
-}
-void Connect4::setStateString(const std::string &s)
-{
-    
-}
-
 Player *Connect4::checkForWinner()
 {
     return nullptr;
 }
 bool Connect4::checkForDraw()
 {
-    return false;
-}
-
-bool Connect4::canBitMoveFrom(Bit &bit, BitHolder &src)
-{
-    // Function not applicable to Connect 4
-    return false;
-}
-bool Connect4::canBitMoveFromTo(Bit &bit, BitHolder &src, BitHolder &dst)
-{
-    // Function not applicable to Connect 4
     return false;
 }
