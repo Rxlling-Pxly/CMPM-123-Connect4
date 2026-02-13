@@ -40,13 +40,12 @@ bool Connect4::actionForEmptyHolder(BitHolder &holder)
     if (!holder.empty())
         return false;
 
-    ChessSquare &square = static_cast<ChessSquare&>(holder);
-    int squareUnderX = square.getColumn();
-    int squareUnderY = square.getRow() + 1;
-    if (_grid->isValid(squareUnderX, squareUnderY) && _grid->getSquare(squareUnderX, squareUnderY)->empty())
+    ChessSquare &square = static_cast<ChessSquare &>(holder);
+    ChessSquare *squareUnder = _grid->getS(square.getColumn(), square.getRow());
+    if (squareUnder && squareUnder->empty())
         return false;
 
-    Bit* piece = CreatePiece(getCurrentPlayer());
+    Bit *piece = CreatePiece(getCurrentPlayer());
     piece->setPosition(holder.getPosition());
     holder.setBit(piece);
     holder.setHighlighted(false);
