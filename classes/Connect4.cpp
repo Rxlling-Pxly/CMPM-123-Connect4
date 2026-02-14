@@ -107,5 +107,13 @@ Player *Connect4::checkForWinner()
 }
 bool Connect4::checkForDraw()
 {
-    return false;
+    // Check if the board is full assuming there's no winner
+    
+    for (int y = 0; y < GRID_HEIGHT; y++) {
+    for (int x = 0; x < GRID_WIDTH; x++) {
+        if (_grid->getSquare(x, y)->empty())
+            return false;
+    }}
+    
+    return true;
 }
