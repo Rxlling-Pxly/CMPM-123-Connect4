@@ -1,3 +1,6 @@
+I AM CURRENTLY STILL WORKING ON THIS PROJECT
+THIS MESSAGE WILL BE REMOVED WHEN I AM DONE
+
 Files modified besides Connect4.h and Connect4.cpp:
 
     readme.md
