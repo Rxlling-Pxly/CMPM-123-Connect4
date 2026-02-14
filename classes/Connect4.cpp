@@ -63,6 +63,46 @@ Bit *Connect4::CreatePiece(Player *player)
 
 Player *Connect4::checkForWinner()
 {
+    struct Position { int x; int y; };
+    static constexpr Position FourInARowsIn4x4Grid[10][4] = {
+        // Horizontals
+        {{0,0},{1,0},{2,0},{3,0}},
+        {{0,1},{1,1},{2,1},{3,1}},
+        {{0,2},{1,2},{2,2},{3,2}},
+        {{0,3},{1,3},{2,3},{3,3}},
+        // Verticals
+        {{0,0},{0,1},{0,2},{0,3}},
+        {{1,0},{1,1},{1,2},{1,3}},
+        {{2,0},{2,1},{2,2},{2,3}},
+        {{3,0},{3,1},{3,2},{3,3}},
+        // Diagonals
+        {{0,0},{1,1},{2,2},{3,3}},
+        {{0,3},{1,2},{2,1},{3,0}},
+    };
+
+    for (int y = 0; y < GRID_HEIGHT - 3; y++) {
+    for (int x = 0; x < GRID_WIDTH - 3; x++) {
+        for (const auto& fourInARow : FourInARowsIn4x4Grid)
+        {
+            ChessSquare *square1 = _grid->getSquare(x + fourInARow[0].x, y + fourInARow[0].y);
+            if (square1->empty()) continue;
+
+            ChessSquare *square2 = _grid->getSquare(x + fourInARow[1].x, y + fourInARow[1].y);
+            if (square2->empty()) continue;
+            if (square1->bit()->getOwner() != square2->bit()->getOwner()) continue;
+
+            ChessSquare *square3 = _grid->getSquare(x + fourInARow[2].x, y + fourInARow[2].y);
+            if (square3->empty()) continue;
+            if (square2->bit()->getOwner() != square3->bit()->getOwner()) continue;
+
+            ChessSquare *square4 = _grid->getSquare(x + fourInARow[3].x, y + fourInARow[3].y);
+            if (square4->empty()) continue;
+            if (square3->bit()->getOwner() != square4->bit()->getOwner()) continue;
+
+            return square1->bit()->getOwner();
+        }
+    }}
+
     return nullptr;
 }
 bool Connect4::checkForDraw()
