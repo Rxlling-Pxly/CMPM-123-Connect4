@@ -1,8 +1,11 @@
 #include "Connect4.h"
 
-Connect4::Connect4() : Game()
+Connect4::Connect4()
 {
+    setNumberOfPlayers(NUM_PLAYERS);
+
     _grid = new Grid(GRID_WIDTH, GRID_HEIGHT);
+    _grid->initializeSquares(80, "square.png");
 }
 Connect4::~Connect4()
 {
@@ -11,19 +14,12 @@ Connect4::~Connect4()
 
 void Connect4::setUpBoard()
 {
-    setNumberOfPlayers(NUM_PLAYERS);
-
-    _gameOptions.rowX = GRID_WIDTH;
-    _gameOptions.rowY = GRID_HEIGHT;
-    _grid->initializeSquares(80, "square.png");
-
     startGame();
 }
 void Connect4::stopGame()
 {
-    _grid->forEachSquare([](ChessSquare *square, int x, int y) {
-        square->destroyBit();
-    });
+    _grid->forEachSquare([](ChessSquare *square, int x, int y)
+        { square->destroyBit(); });
 }
 
 std::string Connect4::initialStateString()
@@ -59,6 +55,11 @@ Bit *Connect4::CreatePiece(Player *player)
     bit->setGameTag(player->playerNumber() + 1);
     bit->LoadTextureFromFile(player == getPlayerAt(YELLOW_PLAYER) ? "yellow.png" : "red.png");
     return bit;
+}
+
+void Connect4::updateAI()
+{
+
 }
 
 Player *Connect4::checkForWinner()
@@ -114,6 +115,6 @@ bool Connect4::checkForDraw()
         if (_grid->getSquare(x, y)->empty())
             return false;
     }}
-    
+
     return true;
 }

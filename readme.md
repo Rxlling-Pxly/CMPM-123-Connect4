@@ -20,3 +20,4 @@ Files modified besides Connect4.h and Connect4.cpp:
 
     Game.cpp
     - so you can see which square you're highlighting
+    - so you can set the AI to be either player 1 or 2
