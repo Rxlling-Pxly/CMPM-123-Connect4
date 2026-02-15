@@ -2,7 +2,7 @@
 #include <cmath>
 #include "Connect4.h"
 
-static struct Position { int x; int y; };
+struct Position { int x; int y; };
 static constexpr Position FourInARowsIn4x4Grid[10][4] = {
     // Horizontals
     {{0,0},{1,0},{2,0},{3,0}},
@@ -78,12 +78,10 @@ Bit *Connect4::CreatePiece(Player *player)
 
 Player *Connect4::checkForWinner()
 {
-    int winnerNumber = getWinnerNumber(stateString());
-    return winnerNumber >= 0
-        ? getPlayerAt(winnerNumber)
-        : nullptr;
+    int i = getWinnerIndex(stateString());
+    return i >= 0 ? getPlayerAt(i) : nullptr;
 }
-int Connect4::getWinnerNumber(const std::string &state)
+int Connect4::getWinnerIndex(const std::string &state)
 {
     for (int y = 0; y < GRID_HEIGHT - 3; y++) {
     for (int x = 0; x < GRID_WIDTH - 3; x++) {
@@ -155,8 +153,8 @@ void Connect4::updateAI()
 }
 int Connect4::negamax(std::string &state, int depth, int alpha, int beta, int color)
 {
-    if (getWinnerNumber(state) >= 0)
-        return color * (INT_MAX - depth);
+    if (getWinnerIndex(state) >= 0)
+        return INT_MIN + depth + 1; // add 1 so result is always greater than initial bestEvaluation which is INT_MIN
 
     if (checkForDraw(state))
         return 0;
@@ -165,9 +163,8 @@ int Connect4::negamax(std::string &state, int depth, int alpha, int beta, int co
         return color * getEvaluation(state);
 
     int bestEvaluation = INT_MIN;
+    char minimizingPlayerNumber = '0' + (getHumanPlayer() + 1);
     char maximizingPlayerNumber = '0' + (getAIPlayer() + 1);
-    char minimizingPlayerNumber = maximizingPlayerNumber == '1' ? '2' : '1';
-
 
     for (int y = 0; y < GRID_HEIGHT; y++) {
     for (int x = 0; x < GRID_WIDTH; x++) {
@@ -176,7 +173,7 @@ int Connect4::negamax(std::string &state, int depth, int alpha, int beta, int co
         if (state[i] != '0') continue;
         if (y + 1 < GRID_HEIGHT && state[i + GRID_WIDTH] == '0') continue;
 
-        state[i] = color == 1 ? maximizingPlayerNumber : minimizingPlayerNumber;
+        state[i] = color == HUMAN_PLAYER ? minimizingPlayerNumber : maximizingPlayerNumber;
         int evaluation = -negamax(state, depth + 1, INT_MIN, INT_MAX, -color);
         state[i] = '0';
         if (evaluation > bestEvaluation)
@@ -188,7 +185,7 @@ int Connect4::negamax(std::string &state, int depth, int alpha, int beta, int co
 int Connect4::getEvaluation(std::string &state)
 {
     int result = 0;
-    int maximizingPlayerNumber = getAIPlayer() + 1;
+    char minimizingPlayerNumber = '0' + (getHumanPlayer() + 1);
 
     for (int y = 0; y < GRID_HEIGHT - 3; y++) {
     for (int x = 0; x < GRID_WIDTH - 3; x++) {
@@ -202,9 +199,8 @@ int Connect4::getEvaluation(std::string &state)
                 char square = state[((y + dy) * GRID_WIDTH) + (x + dx)];
                 if (square == '0') continue;
 
-                int number = square - '0';
-                if (number == maximizingPlayerNumber) numMaximizingPlayerNumbers++;
-                else numMinimizingPlayerNumbers++;
+                if (square == minimizingPlayerNumber) numMinimizingPlayerNumbers++;
+                else numMaximizingPlayerNumbers++;
             }
 
             if (numMinimizingPlayerNumbers > 0 && numMaximizingPlayerNumbers == 0)
@@ -212,12 +208,22 @@ int Connect4::getEvaluation(std::string &state)
                 if      (numMinimizingPlayerNumbers == 1) result -= 1;
                 else if (numMinimizingPlayerNumbers == 2) result -= 10;
                 else if (numMinimizingPlayerNumbers == 3) result -= 100;
+                else
+                {
+                    // this should never happen because we already checked for wins
+                    result -= 1000;
+                }
             }
             else if (numMaximizingPlayerNumbers > 0 && numMinimizingPlayerNumbers == 0)
             {
                 if      (numMaximizingPlayerNumbers == 1) result += 1;
                 else if (numMaximizingPlayerNumbers == 2) result += 10;
                 else if (numMaximizingPlayerNumbers == 3) result += 100;
+                else
+                {
+                    // this should never happen because we already checked for wins
+                    result += 1000;
+                }
             }
         }
     }}
