@@ -42,6 +42,7 @@ private:
     Bit *CreatePiece(Player *player);
 
     int getWinnerNumber(const std::string &state);
+    bool checkForDraw(const std::string &state);
 
     int negamax(std::string &state, int depth, int alpha, int beta, int color);
 };

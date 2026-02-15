@@ -112,11 +112,15 @@ int Connect4::getWinnerNumber(const std::string &state)
 
 bool Connect4::checkForDraw()
 {
+    return checkForDraw(stateString());
+}
+bool Connect4::checkForDraw(const std::string &state)
+{
     // Check if the board is full assuming there's no winner
     
     for (int y = 0; y < GRID_HEIGHT; y++) {
     for (int x = 0; x < GRID_WIDTH; x++) {
-        if (_grid->getSquare(x, y)->empty())
+        if (state[(y * GRID_WIDTH) + x] == '0')
             return false;
     }}
 
