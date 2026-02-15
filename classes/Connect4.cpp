@@ -138,11 +138,8 @@ void Connect4::updateAI()
     for (int x = 0; x < GRID_WIDTH; x++) {
         int i = (y * GRID_WIDTH) + x;
 
-        ChessSquare *square = _grid->getSquareByIndex(i);
-        if (!square->empty()) continue;
-        
-        ChessSquare *squareUnder = _grid->getS(square->getColumn(), square->getRow());
-        if (squareUnder && squareUnder->empty()) continue;
+        if (state[i] != '0') continue;
+        if (y + 1 < GRID_HEIGHT && state[i + GRID_WIDTH] == '0') continue;
 
         state[i] = '0' + (getAIPlayer() + 1);
         int evaluation = -negamax(state, 0, INT_MIN, INT_MAX, HUMAN_PLAYER);
@@ -166,8 +163,27 @@ int Connect4::negamax(std::string &state, int depth, int alpha, int beta, int co
 
     if (depth >= MAX_AI_DEPTH)
         return color * getEvaluation(state);
-    
-    return 0;
+
+    int bestEvaluation = INT_MIN;
+    char maximizingPlayerNumber = '0' + (getAIPlayer() + 1);
+    char minimizingPlayerNumber = maximizingPlayerNumber == '1' ? '2' : '1';
+
+
+    for (int y = 0; y < GRID_HEIGHT; y++) {
+    for (int x = 0; x < GRID_WIDTH; x++) {
+        int i = (y * GRID_WIDTH) + x;
+
+        if (state[i] != '0') continue;
+        if (y + 1 < GRID_HEIGHT && state[i + GRID_WIDTH] == '0') continue;
+
+        state[i] = color == 1 ? maximizingPlayerNumber : minimizingPlayerNumber;
+        int evaluation = -negamax(state, depth + 1, INT_MIN, INT_MAX, -color);
+        state[i] = '0';
+        if (evaluation > bestEvaluation)
+            bestEvaluation = evaluation;
+    }}
+
+    return bestEvaluation;
 }
 int Connect4::getEvaluation(std::string &state)
 {
