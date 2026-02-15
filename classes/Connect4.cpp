@@ -1,5 +1,23 @@
 #include <climits>
+#include <cmath>
 #include "Connect4.h"
+
+static struct Position { int x; int y; };
+static constexpr Position FourInARowsIn4x4Grid[10][4] = {
+    // Horizontals
+    {{0,0},{1,0},{2,0},{3,0}},
+    {{0,1},{1,1},{2,1},{3,1}},
+    {{0,2},{1,2},{2,2},{3,2}},
+    {{0,3},{1,3},{2,3},{3,3}},
+    // Verticals
+    {{0,0},{0,1},{0,2},{0,3}},
+    {{1,0},{1,1},{1,2},{1,3}},
+    {{2,0},{2,1},{2,2},{2,3}},
+    {{3,0},{3,1},{3,2},{3,3}},
+    // Diagonals
+    {{0,0},{1,1},{2,2},{3,3}},
+    {{0,3},{1,2},{2,1},{3,0}},
+};
 
 Connect4::Connect4()
 {
@@ -67,23 +85,6 @@ Player *Connect4::checkForWinner()
 }
 int Connect4::getWinnerNumber(const std::string &state)
 {
-    struct Position { int x; int y; };
-    static constexpr Position FourInARowsIn4x4Grid[10][4] = {
-        // Horizontals
-        {{0,0},{1,0},{2,0},{3,0}},
-        {{0,1},{1,1},{2,1},{3,1}},
-        {{0,2},{1,2},{2,2},{3,2}},
-        {{0,3},{1,3},{2,3},{3,3}},
-        // Verticals
-        {{0,0},{0,1},{0,2},{0,3}},
-        {{1,0},{1,1},{1,2},{1,3}},
-        {{2,0},{2,1},{2,2},{2,3}},
-        {{3,0},{3,1},{3,2},{3,3}},
-        // Diagonals
-        {{0,0},{1,1},{2,2},{3,3}},
-        {{0,3},{1,2},{2,1},{3,0}},
-    };
-
     for (int y = 0; y < GRID_HEIGHT - 3; y++) {
     for (int x = 0; x < GRID_WIDTH - 3; x++) {
         for (const auto& fourInARow : FourInARowsIn4x4Grid)
@@ -157,5 +158,53 @@ void Connect4::updateAI()
 }
 int Connect4::negamax(std::string &state, int depth, int alpha, int beta, int color)
 {
+    if (getWinnerNumber(state) >= 0)
+        return color * (INT_MAX - depth);
+
+    if (checkForDraw(state))
+        return 0;
+
+    if (depth >= MAX_AI_DEPTH)
+        return color * getEvaluation(state);
+    
     return 0;
+}
+int Connect4::getEvaluation(std::string &state)
+{
+    int result = 0;
+    int maximizingPlayerNumber = getAIPlayer() + 1;
+
+    for (int y = 0; y < GRID_HEIGHT - 3; y++) {
+    for (int x = 0; x < GRID_WIDTH - 3; x++) {
+        for (const auto& fourInARow : FourInARowsIn4x4Grid)
+        {
+            int numMinimizingPlayerNumbers = 0;
+            int numMaximizingPlayerNumbers = 0;
+
+            for (const auto& [dx, dy] : fourInARow)
+            {
+                char square = state[((y + dy) * GRID_WIDTH) + (x + dx)];
+                if (square == '0') continue;
+
+                int number = square - '0';
+                if (number == maximizingPlayerNumber) numMaximizingPlayerNumbers++;
+                else numMinimizingPlayerNumbers++;
+            }
+
+            if (numMinimizingPlayerNumbers > 0 && numMaximizingPlayerNumbers == 0)
+            {
+                if      (numMinimizingPlayerNumbers == 1) result -= 1;
+                else if (numMinimizingPlayerNumbers == 2) result -= 10;
+                else if (numMinimizingPlayerNumbers == 3) result -= 100;
+            }
+            else if (numMaximizingPlayerNumbers > 0 && numMinimizingPlayerNumbers == 0)
+            {
+                if      (numMaximizingPlayerNumbers == 1) result += 1;
+                else if (numMaximizingPlayerNumbers == 2) result += 10;
+                else if (numMaximizingPlayerNumbers == 3) result += 100;
+            }
+        }
+    }}
+
+    return result;
 }
