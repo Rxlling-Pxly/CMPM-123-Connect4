@@ -60,6 +60,13 @@ Bit *Connect4::CreatePiece(Player *player)
 
 Player *Connect4::checkForWinner()
 {
+    int winnerNumber = getWinnerNumber(stateString());
+    return winnerNumber >= 0
+        ? getPlayerAt(winnerNumber)
+        : nullptr;
+}
+int Connect4::getWinnerNumber(const std::string &state)
+{
     struct Position { int x; int y; };
     static constexpr Position FourInARowsIn4x4Grid[10][4] = {
         // Horizontals
@@ -81,27 +88,28 @@ Player *Connect4::checkForWinner()
     for (int x = 0; x < GRID_WIDTH - 3; x++) {
         for (const auto& fourInARow : FourInARowsIn4x4Grid)
         {
-            ChessSquare *square1 = _grid->getSquare(x + fourInARow[0].x, y + fourInARow[0].y);
-            if (square1->empty()) continue;
+            char square1 = state[((y + fourInARow[0].y) * GRID_WIDTH) + (x + fourInARow[0].x)];
+            if (square1 == '0') continue;
 
-            ChessSquare *square2 = _grid->getSquare(x + fourInARow[1].x, y + fourInARow[1].y);
-            if (square2->empty()) continue;
-            if (square1->bit()->getOwner() != square2->bit()->getOwner()) continue;
+            char square2 = state[((y + fourInARow[1].y) * GRID_WIDTH) + (x + fourInARow[1].x)];
+            if (square2 == '0') continue;
+            if (square1 != square2) continue;
 
-            ChessSquare *square3 = _grid->getSquare(x + fourInARow[2].x, y + fourInARow[2].y);
-            if (square3->empty()) continue;
-            if (square2->bit()->getOwner() != square3->bit()->getOwner()) continue;
+            char square3 = state[((y + fourInARow[2].y) * GRID_WIDTH) + (x + fourInARow[2].x)];
+            if (square3 == '0') continue;
+            if (square2 != square3) continue;
 
-            ChessSquare *square4 = _grid->getSquare(x + fourInARow[3].x, y + fourInARow[3].y);
-            if (square4->empty()) continue;
-            if (square3->bit()->getOwner() != square4->bit()->getOwner()) continue;
+            char square4 = state[((y + fourInARow[3].y) * GRID_WIDTH) + (x + fourInARow[3].x)];
+            if (square4 == '0') continue;
+            if (square3 != square4) continue;
 
-            return square1->bit()->getOwner();
+            return (square1 - '0') - 1;
         }
     }}
 
-    return nullptr;
+    return -1;
 }
+
 bool Connect4::checkForDraw()
 {
     // Check if the board is full assuming there's no winner
@@ -132,7 +140,7 @@ void Connect4::updateAI()
         if (squareUnder && squareUnder->empty()) continue;
 
         state[i] = '0' + (getAIPlayer() + 1);
-        int evaluation = -negamax(state, HUMAN_PLAYER);
+        int evaluation = -negamax(state, 0, INT_MIN, INT_MAX, HUMAN_PLAYER);
         state[i] = '0';
         if (evaluation > bestEvaluation)
         {
@@ -143,7 +151,7 @@ void Connect4::updateAI()
 
     actionForEmptyHolder(*(_grid->getSquareByIndex(bestSquareIndex)));
 }
-int Connect4::negamax(std::string &state, int color)
+int Connect4::negamax(std::string &state, int depth, int alpha, int beta, int color)
 {
     return 0;
 }

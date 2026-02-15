@@ -35,9 +35,13 @@ private:
 
     static const unsigned int NUM_PLAYERS = 2;
 
+    static const unsigned int MAX_AI_DEPTH = 1;
+
     Grid* _grid = nullptr;
 
     Bit *CreatePiece(Player *player);
 
-    int negamax(std::string &state, int color);
+    int getWinnerNumber(const std::string &state);
+
+    int negamax(std::string &state, int depth, int alpha, int beta, int color);
 };
