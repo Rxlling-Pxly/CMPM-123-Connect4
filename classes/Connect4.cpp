@@ -174,10 +174,15 @@ int Connect4::negamax(std::string &state, int depth, int alpha, int beta, int co
         if (y + 1 < GRID_HEIGHT && state[i + GRID_WIDTH] == '0') continue;
 
         state[i] = color == HUMAN_PLAYER ? minimizingPlayerNumber : maximizingPlayerNumber;
-        int evaluation = -negamax(state, depth + 1, INT_MIN, INT_MAX, -color);
+        int evaluation = -negamax(state, depth + 1, -beta, -alpha, -color);
         state[i] = '0';
         if (evaluation > bestEvaluation)
             bestEvaluation = evaluation;
+        
+        if (bestEvaluation > alpha)
+            alpha = bestEvaluation;
+        if (alpha >= beta)
+            return bestEvaluation;
     }}
 
     return bestEvaluation;
