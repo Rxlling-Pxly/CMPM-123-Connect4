@@ -1,5 +1,8 @@
-I AM CURRENTLY STILL WORKING ON THIS PROJECT
-THIS MESSAGE WILL BE REMOVED WHEN I AM DONE
+Implementation explanation:
+
+    sdfsdfsdfs
+    sdfsdf
+    sdf
 
 Files modified besides Connect4.h and Connect4.cpp:
 
