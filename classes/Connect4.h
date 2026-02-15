@@ -21,9 +21,10 @@ public:
     void setStateString(const std::string &s) {} // not implemented, forced to override
 
     bool actionForEmptyHolder(BitHolder &holder) override;
-    void updateAI() override;
     Player *checkForWinner() override;
     bool checkForDraw() override;
+
+    void updateAI() override;
 
     bool canBitMoveFrom(Bit &bit, BitHolder &src) { return false; } // not applicable, forced to override
     bool canBitMoveFromTo(Bit &bit, BitHolder &src, BitHolder &dst) { return false; } // not applicable, forced to override
@@ -37,4 +38,6 @@ private:
     Grid* _grid = nullptr;
 
     Bit *CreatePiece(Player *player);
+
+    int negamax(std::string &state, int color);
 };

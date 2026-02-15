@@ -1,3 +1,4 @@
+#include <climits>
 #include "Connect4.h"
 
 Connect4::Connect4()
@@ -57,11 +58,6 @@ Bit *Connect4::CreatePiece(Player *player)
     return bit;
 }
 
-void Connect4::updateAI()
-{
-
-}
-
 Player *Connect4::checkForWinner()
 {
     struct Position { int x; int y; };
@@ -117,4 +113,37 @@ bool Connect4::checkForDraw()
     }}
 
     return true;
+}
+
+void Connect4::updateAI()
+{
+    int bestSquareIndex = INT_MIN;
+    int bestEvaluation = INT_MIN;
+    std::string state = stateString();
+
+    for (int y = 0; y < GRID_HEIGHT; y++) {
+    for (int x = 0; x < GRID_WIDTH; x++) {
+        int i = (y * GRID_WIDTH) + x;
+
+        ChessSquare *square = _grid->getSquareByIndex(i);
+        if (!square->empty()) continue;
+        
+        ChessSquare *squareUnder = _grid->getS(square->getColumn(), square->getRow());
+        if (squareUnder && squareUnder->empty()) continue;
+
+        state[i] = '0' + (getAIPlayer() + 1);
+        int evaluation = -negamax(state, HUMAN_PLAYER);
+        state[i] = '0';
+        if (evaluation > bestEvaluation)
+        {
+            bestSquareIndex = i;
+            bestEvaluation = evaluation;
+        }
+    }}
+
+    actionForEmptyHolder(*(_grid->getSquareByIndex(bestSquareIndex)));
+}
+int Connect4::negamax(std::string &state, int color)
+{
+    return 0;
 }
